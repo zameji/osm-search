@@ -185,7 +185,12 @@ export default new Vuex.Store({
         .then((response) => {
           let time2 = performance.now();
           commit("setResponseTime", time2 - time1);
-          commit("setSearchResults", response.data);
+          if (response.data) {
+            // Response from new API
+            commit("setSearchResults", response.data);
+          } else {
+            commit("setSearchResults", response);
+          }
           commit("setLoading", false);
           commit("setError", false);
         })
