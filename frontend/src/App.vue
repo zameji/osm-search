@@ -7,22 +7,15 @@
         ></v-toolbar-title
       >
       <v-spacer />
-      <v-btn @click="toggleDarkMode" icon="mdi-theme-light-dark"> </v-btn>
-      <v-btn
-        v-if="user"
-        icon="mdi-help"
-        @click="store.isHelpShown = true"
-        class="mx-2"
-      ></v-btn>
       <span class="user" v-if="user">
         {{ user.email }}
       </span>
-      <v-btn v-if="user" href="#" @click="store.signout()">Sign Out</v-btn>
+      <v-btn v-if="user" href="#" @click="$store.dispatch('signout')"
+        >Sign Out</v-btn
+      >
     </v-app-bar>
-
-    <FirebaseLogin v-if="!user" class="mt-16" />
+    <FirebaseLogin v-if="!user" />
     <router-view></router-view>
-
     <v-footer class="legal">
       <router-link to="/privacy">Privacy Policy</router-link>
       <router-link to="/tos">Terms of Service</router-link>
@@ -30,26 +23,23 @@
   </v-app>
 </template>
 
-<script setup lang="ts">
-import { onMounted, computed } from "vue";
-import { useAppStore } from "./stores/app";
-import { useTheme } from "vuetify";
+<script>
+import FirebaseLogin from "./components/FirebaseLogin.vue";
 
-const theme = useTheme();
-
-const store = useAppStore();
-
-onMounted(() => {
-  store.getKeys();
-});
-
-const user = computed(() => {
-  return store.user;
-});
-
-function toggleDarkMode() {
-  theme.global.name.value = theme.global.current.value.dark ? "light" : "dark";
-}
+export default {
+  name: "App",
+  components: {
+    FirebaseLogin,
+  },
+  mounted() {
+    this.$store.dispatch("getKeys");
+  },
+  computed: {
+    user() {
+      return this.$store.state.user;
+    },
+  },
+};
 </script>
 
 <style>
